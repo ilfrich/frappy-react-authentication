@@ -74,6 +74,9 @@ class ChangePassword extends React.Component {
             return null
         }
 
+        const effectiveMixins = this.props.mixins || mixins
+        const titleStyle = this.props.titleStyle || {}
+
         return (
             <div style={style.form}>
                 <NotificationBar
@@ -81,49 +84,49 @@ class ChangePassword extends React.Component {
                         this.alert = el
                     }}
                 />
-                <h3 style={style.title}>Change Password</h3>
+                <h3 style={{ ...style.title, ...titleStyle }}>Change Password</h3>
                 {this.state.passwordChanged ? (
                     <div>Password changed</div>
                 ) : (
                     <div>
-                        <label style={mixins.label} htmlFor="oldpw">
+                        <label style={effectiveMixins.label} htmlFor="oldpw">
                             Old Password
                         </label>
                         <input
                             type="password"
-                            style={mixins.textInput}
+                            style={effectiveMixins.textInput}
                             ref={el => {
                                 this.oldPassword = el
                             }}
                             id="oldpw"
                         />
 
-                        <label style={mixins.label} htmlFor="newpw1">
+                        <label style={effectiveMixins.label} htmlFor="newpw1">
                             New Password
                         </label>
                         <input
                             type="password"
-                            style={mixins.textInput}
+                            style={effectiveMixins.textInput}
                             ref={el => {
                                 this.newPassword1 = el
                             }}
                             id="newpw1"
                         />
 
-                        <label style={mixins.label} htmlFor="newpw2">
+                        <label style={effectiveMixins.label} htmlFor="newpw2">
                             Repeat New Password
                         </label>
                         <input
                             type="password"
-                            style={mixins.textInput}
+                            style={effectiveMixins.textInput}
                             ref={el => {
                                 this.newPassword2 = el
                             }}
                             id="newpw2"
                         />
 
-                        <div style={mixins.buttonLine}>
-                            <button style={mixins.button} onClick={this.changePassword} type="button">
+                        <div style={effectiveMixins.buttonLine}>
+                            <button style={effectiveMixins.button} onClick={this.changePassword} type="button">
                                 Change Password
                             </button>
                         </div>

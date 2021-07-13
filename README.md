@@ -6,6 +6,7 @@ React Pages and Components to Facilitate Authentication and User Management
     1. [Login-Protected Page Section](#login-protected-page-section)
     2. [Login Form Only](#login-form-only)
     3. [Logout](#logout)
+    4. [Change Password](#change-password)
 2. [Login and Permission Check](#permission-and-login-check)
     1. [Permission Check](#permission-check)
     2. [Login Check](#login-check)
@@ -128,6 +129,31 @@ const Header = props => (
 **Properties**
 
 - `apiPrefix` - default `/api/user` - will result in logout REST call: `DELETE /api/user/login`
+
+### Change Password
+
+The package provides a simple change password form, where the user needs to provide the current password and 
+set the new password (twice for confirmation and to avoid typos). The component ties into the change password
+endpoints provided by `frappyflaskauth` (Python) or `@frappy/node-authentication` (Node).
+
+```javascript
+import React from "react"
+import { ChangePassword } from "@frappy/react-authentication"
+
+const UserManagementPage = props => (
+    <div>
+        <ChangePassword currentUser={props.currentUser} />
+    </div>
+)
+```
+
+**Properties**
+
+- `currentUser` - the currently logged in user (as provided by the `LoginForm` or `LoginWrapper`)
+- `apiPrefix` - default `/api/user` - the prefix for the change password API call
+- `mixins` - default [`quick-n-dirty-react/mixins`](https://github.com/ilfrich/quick-n-dirty-react#css-mixins) - mixins
+ user to style the `textInput`, form `label` and `button`.
+- `titleStyle` - default to red, bold title font - an override for the style of the form title "Change Password"
 
 ## Permission and Login Check
 
