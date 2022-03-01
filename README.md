@@ -68,6 +68,9 @@ You can obviously put the `LoginWrapper` at any level of your application (e.g. 
  is already authenticated or after successful login
 - `apiPrefix` - default `/api/user` - endpoint used for authentication check and login (login endpoint uses
  `${apiPrefix}/login`)
+ - `mixins` - default [`quick-n-dirty-react/mixins`](https://github.com/ilfrich/quick-n-dirty-react#css-mixins) - mixins
+ user to style the `textInput`, form `label` and `button`.
+- `titleStyle` - default to red, bold title font - an override for the style of the form title "Login"
  
 ### Login Form Only
  
@@ -108,6 +111,9 @@ class MyPage extends React.Component {
 - `setUser` - a function to handle the incoming user object, if authentication is successful
 - `apiPrefix` - default `/api/user` - the prefix for the `/login` endpoint, default will result in 
  `POST /api/user/login`
+ - `mixins` - default [`quick-n-dirty-react/mixins`](https://github.com/ilfrich/quick-n-dirty-react#css-mixins) - mixins
+ user to style the `textInput`, form `label` and `button`.
+- `titleStyle` - default to red, bold title font - an override for the style of the form title "Login"
  
 ### Logout
 
@@ -129,6 +135,7 @@ const Header = props => (
 **Properties**
 
 - `apiPrefix` - default `/api/user` - will result in logout REST call: `DELETE /api/user/login`
+- `redirect` - defaults to current URL - will redirect to the provided URL after logout.
 
 ### Change Password
 
@@ -323,6 +330,9 @@ const RouterComponent = props => (
 **Properties**
 
 - `currentUser` - required - a user object for which the API key will be managed.
+- `mixins` - default [`quick-n-dirty-react/mixins`](https://github.com/ilfrich/quick-n-dirty-react#css-mixins) - mixins
+ user to style the `textInput`, form `label` and `button`.
+- `titleStyle` - default to red, bold title font - an override for the style of the form title "API Key"
 
 ## API Endpoints
 
