@@ -33,7 +33,7 @@ class LoginWrapper extends React.Component {
         if (this.state.currentUser == null) {
             return (
                 <div>
-                    <LoginForm setUser={this.setUser} apiPrefix={apiPrefix} />
+                    <LoginForm setUser={this.setUser} apiPrefix={apiPrefix} mixins={this.props.mixins} />
                 </div>
             )
         }

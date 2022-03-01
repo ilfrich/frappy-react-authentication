@@ -1,10 +1,11 @@
 {
   "name": "@frappy/react-authentication",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Authentication related components for React",
   "main": "index.js",
   "scripts": {
     "build": "./node_modules/.bin/babel src --out-dir ./dist",
+    "deploy": "npm run build && npm publish",
     "format": "eslint --fix \"**/*.{js,mjs}\""
   },
   "repository": {
