@@ -24,7 +24,12 @@ class Logout extends React.Component {
             util.logout()
 
             // reload page to render login form again
-            location.reload()
+            if (this.props.redirect != null) {
+                location.href = this.props.redirect
+            } else {
+                location.reload()
+            }
+            
         })
     }
 

@@ -11,18 +11,6 @@ const style = {
         padding: "50px",
         borderRadius: "10px",
     },
-    buttonRow: {
-        marginLeft: "-5px",
-        marginTop: "20px",
-    },
-    activeButton: {
-        ...mixins.button,
-        width: "150px",
-    },
-    inactiveButton: {
-        ...mixins.buttonDisabled,
-        width: "150px",
-    },
     title: {
         color: "#600",
         fontSize: "20px",
@@ -34,11 +22,6 @@ const style = {
         border: "1px solid #fcc",
         background: "#fcc",
         marginBottom: "10px",
-    },
-    loginNote: {
-        fontSize: "12px",
-        padding: "8px 0px",
-        marginTop: "-10px",
     },
 }
 
@@ -121,14 +104,16 @@ class LoginForm extends React.Component {
     }
 
     render() {
+        const effectiveMixins = this.props.mixins || mixins
+        const titleStyle = this.props.titleStyle || style.title
         return (
             <div style={style.loginForm}>
-                <h3 style={style.title}>Login</h3>
+                <h3 style={titleStyle}>Login</h3>
                 {this.state.loginOutcome != null ? <div style={style.error}>{this.state.loginOutcome}</div> : null}
                 <div>
                     <input
                         type="text"
-                        style={mixins.textInput}
+                        style={effectiveMixins.textInput}
                         ref={e => {
                             this.username = e
                         }}
@@ -136,7 +121,7 @@ class LoginForm extends React.Component {
                     />
                     <input
                         type="password"
-                        style={mixins.textInput}
+                        style={effectiveMixins.textInput}
                         ref={e => {
                             this.password = e
                         }}
@@ -144,13 +129,13 @@ class LoginForm extends React.Component {
                         placeholder="Password"
                     />
                 </div>
-                <div style={style.buttonRow}>
+                <div style={effectiveMixins.buttonLine}>
                     {this.state.loggingIn === true ? (
-                        <button type="button" style={style.inactiveButton}>
+                        <button type="button" style={effectiveMixins.inverseButton}>
                             Authenticating ...
                         </button>
                     ) : (
-                        <button type="button" style={style.activeButton} onClick={this.performLogin}>
+                        <button type="button" style={effectiveMixins.button} onClick={this.performLogin}>
                             Login
                         </button>
                     )}

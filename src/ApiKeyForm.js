@@ -87,6 +87,9 @@ class ApiKeyForm extends React.Component {
     }
 
     render() {
+        const effectiveMixins = this.props.mixins || mixins
+        const titleStyle = this.props.titleStyle || style.title
+
         return (
             <div style={style.form}>
                 <NotificationBar
@@ -94,17 +97,17 @@ class ApiKeyForm extends React.Component {
                         this.alert = el
                     }}
                 />
-                <h3 style={style.title}>API Key</h3>
-                <input type="text" disabled defaultValue={this.state.currentKey} style={mixins.textInput} />
+                <h3 style={titleStyle}>API Key</h3>
+                <input type="text" disabled defaultValue={this.state.currentKey} style={effectiveMixins.textInput} />
                 {this.state.currentKey != null ? (
                     <div style={mixins.right}>
-                        <span style={mixins.textLink} onClick={this.copyKey}>
+                        <span style={effectiveMixins.textLink} onClick={this.copyKey}>
                             Copy
                         </span>
                     </div>
                 ) : null}
-                <div style={mixins.buttonLine}>
-                    <button type="button" style={mixins.button} onClick={this.regenerate}>
+                <div style={effectiveMixins.buttonLine}>
+                    <button type="button" style={effectiveMixins.button} onClick={this.regenerate}>
                         Create New Key
                     </button>
                     <button type="button" style={style.deleteButton} onClick={this.revoke}>
