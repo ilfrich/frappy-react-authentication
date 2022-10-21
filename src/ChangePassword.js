@@ -1,6 +1,6 @@
 import React from "react"
 import { mixins, NotificationBar } from "quick-n-dirty-react"
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const style = {
     form: {

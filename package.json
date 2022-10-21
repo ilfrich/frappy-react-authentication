@@ -1,6 +1,6 @@
 {
   "name": "@frappy/react-authentication",
-  "version": "1.5.4",
+  "version": "1.6.0",
   "description": "Authentication related components for React",
   "main": "index.js",
   "scripts": {
@@ -20,8 +20,8 @@
   ],
   "author": "Peter Ilfrich",
   "dependencies": {
-    "quick-n-dirty-react": "^0.1.1",
-    "quick-n-dirty-utils": "^0.0.8",
+    "quick-n-dirty-react": "^1.0.1",
+    "quick-n-dirty-utils": "^1.0.0",
     "react": "^16.13.1"
   },
   "devDependencies": {

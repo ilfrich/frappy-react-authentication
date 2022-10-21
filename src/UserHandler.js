@@ -1,4 +1,4 @@
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 class UserHandler {
     constructor(apiPrefix = "/api/user/users") {

@@ -1,7 +1,6 @@
 import React from "react"
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 import { mixins, Popup } from "quick-n-dirty-react"
-import UserForm from "./UserForm"
 import LocalUserForm from "./LocalUserForm"
 import UserHandler from "./UserHandler"
 

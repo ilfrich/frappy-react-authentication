@@ -1,5 +1,5 @@
 import React from "react"
-import util from "quick-n-dirty-utils"
+import { util } from "quick-n-dirty-utils"
 
 const loginStates = {
     noToken: 0,
