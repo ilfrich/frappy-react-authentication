@@ -1,6 +1,6 @@
 {
   "name": "@frappy/react-authentication",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Authentication related components for React",
   "main": "index.js",
   "scripts": {

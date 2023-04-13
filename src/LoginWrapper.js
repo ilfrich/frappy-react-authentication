@@ -27,7 +27,7 @@ class LoginWrapper extends React.Component {
     render() {
         const apiPrefix = this.props.apiPrefix || "/api/user"
         if (this.state.firstCheckDone === false) {
-            return <LoginCheck setUser={this.setUser} apiPrefix={apiPrefix} />
+            return <div><LoginCheck setUser={this.setUser} apiPrefix={apiPrefix} /></div>
         }
 
         if (this.state.currentUser == null) {
