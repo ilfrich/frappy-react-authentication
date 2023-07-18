@@ -1,11 +1,20 @@
 import { util } from "quick-n-dirty-utils"
+import { UserProfileType, UserType } from "./shared-types"
+
+export interface UserListResponseType {
+    users: UserType[],
+    total: number,
+}
 
 class UserHandler {
-    constructor(apiPrefix = "/api/user/users") {
+
+    private apiPrefix: string
+
+    constructor(apiPrefix: string = "/api/user/users") {
         this.apiPrefix = apiPrefix
     }
 
-    updateUserProfile(userId, updatedProfile) {
+    updateUserProfile(userId: string, updatedProfile: UserProfileType): Promise<UserType> {
         return fetch(`${this.apiPrefix}/${userId}/profile`, {
             method: "POST",
             headers: util.getAuthJsonHeader(),
@@ -13,20 +22,20 @@ class UserHandler {
         }).then(util.restHandler)
     }
 
-    deleteUser(userId) {
+    deleteUser(userId: string) {
         return fetch(`${this.apiPrefix}/${userId}`, {
             method: "DELETE",
             headers: util.getAuthJsonHeader(),
         }).then(util.restHandler)
     }
 
-    getAllUsers(page) {
+    getAllUsers(page?: number): Promise<UserListResponseType> {
         return fetch(`${this.apiPrefix}?page=${page || 0}`, {
             headers: util.getAuthJsonHeader(),
         }).then(util.restHandler)
     }
 
-    updatePermissions(userId, newPermissions) {
+    updatePermissions(userId: string | undefined, newPermissions: string[]): Promise<UserType> {
         return fetch(`${this.apiPrefix}/${userId}/permissions`, {
             method: "POST",
             headers: util.getAuthJsonHeader(),
@@ -34,7 +43,7 @@ class UserHandler {
         }).then(util.restHandler)
     }
 
-    createUserRequest(newUser) {
+    createUserRequest(newUser: UserType) {
         return fetch(this.apiPrefix, {
             method: "POST",
             headers: util.getAuthJsonHeader(),
@@ -42,11 +51,11 @@ class UserHandler {
         })
     }
 
-    createUser(newUser) {
+    createUser(newUser: UserType): Promise<UserType> {
         return this.createUserRequest(newUser).then(util.restHandler)
     }
 
-    updateUserPassword(userId, newPassword) {
+    updateUserPassword(userId: string | undefined, newPassword: string): Promise<UserType> {
         return fetch(`${this.apiPrefix}/${userId}/password`, {
             method: "POST",
             headers: util.getAuthJsonHeader(),

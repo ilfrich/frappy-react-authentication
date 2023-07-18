@@ -1,7 +1,16 @@
 import React from "react"
 import { mixins } from "quick-n-dirty-react"
+import { UserType } from "./shared-types"
 
-const PermissionCheck = props => {
+export interface PermissionCheckProps {
+    showError?: boolean,
+    currentUser?: UserType,
+    requiredPermissions?: string[],
+    permission?: [],
+    children: React.ReactNode
+}
+
+const PermissionCheck = (props: PermissionCheckProps) => {
     // determine default content (default = null)
     const noPermContent = props.showError ? <div style={mixins.red}>You do not have access.</div> : null
 
@@ -19,7 +28,7 @@ const PermissionCheck = props => {
     }
 
     // compile required permissions
-    const permissions = []
+    const permissions: string[] = []
 
     if (typeof permissionProps === "string") {
         // single permission
@@ -39,7 +48,7 @@ const PermissionCheck = props => {
     // check permissions
     let hasAllPermissions = true
     permissions.forEach(perm => {
-        if (props.currentUser.permissions.indexOf(perm) === -1) {
+        if (props.currentUser!.permissions.indexOf(perm) === -1) {
             hasAllPermissions = false
         }
     })

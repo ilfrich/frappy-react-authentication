@@ -1,5 +1,7 @@
 import React from "react"
 import { mixins } from "quick-n-dirty-react"
+import { UserType } from "./shared-types"
+import UserHandler from "./UserHandler"
 
 const style = {
     option: {
@@ -9,6 +11,20 @@ const style = {
     },
 }
 
+export interface UserFormProps {
+    user?: UserType,
+    onFinish: (user: UserType) => void,
+    userHandler: UserHandler,
+    allPermissions?: string[],
+    permissions?: string[],
+
+}
+interface UserFormState {
+    permissions: string[],
+    currentUsername: string,
+    currentPassword: string,
+}
+
 /**
  * Row element inside the user list.
  *
@@ -16,8 +32,8 @@ const style = {
  * will be called. On successful completion, the `onFinish` handler will be
  * called with the new or updated user as payload.
  */
-class UserForm extends React.Component {
-    constructor(props) {
+class UserForm extends React.Component<UserFormProps, UserFormState> {
+    constructor(props: UserFormProps) {
         super(props)
         this.state = {
             permissions: [],
@@ -46,7 +62,7 @@ class UserForm extends React.Component {
      * @param {string} permission - string representation of a permission - e.g. `READ`
      * @returns {function} event handler to toggle the provided permission
      */
-    updatePermission(permission) {
+    updatePermission(permission: string) {
         return () => {
             this.setState(oldState => {
                 const { permissions } = oldState
@@ -72,7 +88,7 @@ class UserForm extends React.Component {
         const { permissions } = this.state
         // update existing permissions
         this.props.userHandler
-            .updatePermissions(user._id || user.id, permissions)
+            .updatePermissions(user!._id || user!.id, permissions)
             .then(updatedUser => {
                 // call parent handler with updated user
                 onFinish(updatedUser)
@@ -84,39 +100,41 @@ class UserForm extends React.Component {
 
     cancel() {
         const { user, onFinish } = this.props
-        onFinish(user)
+        onFinish(user!)
     }
 
     render() {
         const { user } = this.props
         const { permissions } = this.state
-        return [
-            <div key="username">{user.email || user.username}</div>,
-            <div key="permissions">
-                <ul style={mixins.noList}>
-                    {this.props.allPermissions.map(permission => (
-                        <li key={permission}>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    onChange={this.updatePermission(permission)}
-                                    checked={permissions.indexOf(permission) !== -1}
-                                />{" "}
-                                {permission}
-                            </label>
-                        </li>
-                    ))}
-                </ul>
-            </div>,
-            <div key="options">
-                <span style={style.option} onClick={this.save}>
-                    Save
-                </span>
-                <span style={style.option} onClick={this.cancel}>
-                    Cancel
-                </span>
-            </div>,
-        ]
+        return (
+            <div>
+                <div>{user!.email || user!.username}</div>
+                <div>
+                    <ul style={mixins.noList}>
+                        {this.props.allPermissions!.map(permission => (
+                            <li key={permission}>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        onChange={this.updatePermission(permission)}
+                                        checked={permissions.indexOf(permission) !== -1}
+                                    />{" "}
+                                    {permission}
+                                </label>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div>
+                    <span style={style.option} onClick={this.save}>
+                        Save
+                    </span>
+                    <span style={style.option} onClick={this.cancel}>
+                        Cancel
+                    </span>
+                </div>
+            </div>
+        )
     }
 }
 

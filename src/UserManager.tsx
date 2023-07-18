@@ -3,6 +3,8 @@ import { util } from "quick-n-dirty-utils"
 import { mixins, Popup } from "quick-n-dirty-react"
 import LocalUserForm from "./LocalUserForm"
 import UserHandler from "./UserHandler"
+import { UserProfileType, UserType } from "./shared-types"
+import ProfileManager from "./ProfileManager"
 
 const style = {
     table: {
@@ -43,7 +45,7 @@ const style = {
         borderTop: "1px solid #ccc",
         paddingTop: "5px",
     },
-    page: current => ({
+    page: (current: boolean) => ({
         ...mixins.clickable,
         ...(current ? {} : mixins.textLink),
         paddingLeft: "4px",
@@ -51,8 +53,35 @@ const style = {
     }),
 }
 
-class UserManager extends React.Component {
-    constructor(props) {
+export interface UserManagerProps {
+    apiPrefix?: string,
+    adminPermission?: string,
+    permissions: string[],
+    currentUser?: UserType,
+    profileManager: ProfileManager,
+    profileManagerProps: {
+        [key in string]: any
+    }
+}
+type UserListType = {
+    [userid in string]: UserType
+}
+interface UserManagerState {
+    userList?: UserListType | null
+    totalUsers: number
+    editUser?: string | null
+    deleteUser?: string | null
+    editProfile?: UserType | null,
+    currentPage: number,
+    pageSize: number,
+}
+
+class UserManager extends React.Component<UserManagerProps, UserManagerState> {
+
+    private userHandler: UserHandler
+    private profileManager?: ProfileManager
+
+    constructor(props: UserManagerProps) {
         super(props)
         this.state = {
             // map from _id => user object
@@ -96,7 +125,7 @@ class UserManager extends React.Component {
         return allPermissions
     }
 
-    setPage(page) {
+    setPage(page: number) {
         return () => {
             this.setState({
                 currentPage: page,
@@ -106,9 +135,13 @@ class UserManager extends React.Component {
                 .getAllUsers(page)
                 .then(response => {
                     // from list to map (for easier updates)
-                    const userList = {}
+                    const userList: UserListType = {}
                     response.users.forEach(user => {
-                        userList[user._id || user.id] = user
+                        const userId: string | undefined = user._id || user.id
+                        if (userId == null) {
+                            return
+                        }
+                        userList[userId] = user
                     })
                     this.setState(oldState => ({
                         totalUsers: response.total,
@@ -138,7 +171,7 @@ class UserManager extends React.Component {
      * @param {string|null} userId - the id of a user or null if the operation should be cancelled.
      * @returns {function} an event handler
      */
-    askDeleteUser(userId) {
+    askDeleteUser(userId?: string | null) {
         return () => {
             this.setState({
                 deleteUser: userId,
@@ -152,11 +185,14 @@ class UserManager extends React.Component {
      */
     deleteUser() {
         const { deleteUser } = this.state
+        if (deleteUser == null) {
+            return
+        }
         this.userHandler.deleteUser(deleteUser).then(() => {
             // also clean the user from the local state
             this.setState(oldState => {
                 const { userList } = oldState
-                delete userList[deleteUser]
+                delete userList![deleteUser]
                 return {
                     ...oldState,
                     userList,
@@ -174,7 +210,7 @@ class UserManager extends React.Component {
      * @param {string|boolean} userId - can be an _id for edit or boolean (true) for new user
      * @returns {Function} an event handler for each row in the user list
      */
-    editUser(userId) {
+    editUser(userId?: string) {
         return () => {
             this.setState(
                 {
@@ -195,7 +231,7 @@ class UserManager extends React.Component {
      * @param {object} user - a user object
      * @returns {function} an event handler that updates the state setting the editProfile
      */
-    editProfile(user) {
+    editProfile(user: UserType | null) {
         return () => {
             this.setState(
                 {
@@ -225,11 +261,14 @@ class UserManager extends React.Component {
             console.warn("Your profile manager's 'getProfile()' method returned null.")
             return
         }
+        if (this.state.editProfile == null) {
+            return
+        }
         const userId = this.state.editProfile._id || this.state.editProfile.id
-        this.userHandler.updateUserProfile(userId, profile).then(updatedProfile => {
+        this.userHandler.updateUserProfile(userId!, profile).then(updatedProfile => {
             this.setState(oldState => {
                 const { userList } = oldState
-                userList[userId].profile = updatedProfile.profile
+                userList![userId!].profile = updatedProfile.profile
                 return {
                     ...oldState,
                     userList,
@@ -246,7 +285,7 @@ class UserManager extends React.Component {
      * @param {string|object} user - the new or updated user profile, or a user's _id in case of
      * delete
      */
-    finishEdit(user) {
+    finishEdit(user: string | UserType) {
         this.setState(oldState => {
             const { userList } = oldState
             let { totalUsers, pageSize } = oldState
@@ -254,17 +293,17 @@ class UserManager extends React.Component {
             if (user != null) {
                 if (typeof user === "string") {
                     // user deleted
-                    delete userList[user]
+                    delete userList![user]
                 } else {
                     // update or new user
                     const userId = user._id || user.id
-                    if (userList[userId] == null) {
-                        if (pageSize === Object.keys(userList).length) {
+                    if (userList![userId!] == null) {
+                        if (pageSize === Object.keys(userList!).length) {
                             pageSize += 1
                         }
                         totalUsers += 1
                     }
-                    userList[userId] = user
+                    userList![userId!] = user
                 }
             }
             return {
@@ -285,7 +324,7 @@ class UserManager extends React.Component {
             return <div>Loading Users</div>
         }
 
-        const ProfileManager = this.props.profileManager
+        const CustomProfileManager: ProfileManager = this.props.profileManager
         return (
             <div>
                 {this.state.editProfile != null && ProfileManager != null ? (
@@ -294,12 +333,10 @@ class UserManager extends React.Component {
                             Updating profile of {this.state.editProfile.username || this.state.editProfile.email}
                         </div>
                         <div style={mixins.vSpacer(15)} />
-                        <ProfileManager
+                        <CustomProfileManager
                             user={this.state.editProfile}
                             profileManagerProps={this.props.profileManagerProps}
-                            ref={el => {
-                                this.profileManager = el
-                            }}
+                            ref={this.profileManager}
                         />
                         <div style={mixins.vSpacer(15)} />
                         <div style={mixins.buttonRow}>
@@ -315,7 +352,7 @@ class UserManager extends React.Component {
                 ) : null}
                 {editUser != null ? (
                     <LocalUserForm
-                        user={this.state.userList[editUser]}
+                        user={this.state.userList![editUser]}
                         userHandler={this.userHandler}
                         permissions={this.getAllPermissions()}
                         onFinish={this.finishEdit}
@@ -349,7 +386,7 @@ class UserManager extends React.Component {
                         {this.state.totalUsers > this.state.pageSize ? (
                             <span>
                                 Page:
-                                {util.range(1, Math.ceil(this.state.totalUsers / this.state.pageSize)).map(page => (
+                                {util.range(1, Math.ceil(this.state.totalUsers / this.state.pageSize)).map((page: number) => (
                                     <span
                                         style={style.page(this.state.currentPage === page - 1)}
                                         onClick={this.setPage(page - 1)}

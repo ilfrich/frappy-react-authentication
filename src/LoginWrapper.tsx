@@ -1,9 +1,23 @@
 import React from "react"
 import LoginForm from "./LoginForm"
 import LoginCheck from "./LoginCheck"
+import { UserType } from "./shared-types"
 
-class LoginWrapper extends React.Component {
-    constructor(props) {
+export interface LoginWrapperProps {
+    setUser: (user: UserType | null) => void,
+    apiPrefix?: string,
+    mixins: {
+        [key in string]: React.CSSProperties
+    },
+    children: React.ReactNode,
+}
+interface LoginWrapperState {
+    currentUser?: UserType | null,
+    firstCheckDone: boolean,
+}
+
+class LoginWrapper extends React.Component<LoginWrapperProps, LoginWrapperState> {
+    constructor(props: LoginWrapperProps) {
         super(props)
         this.state = {
             currentUser: null,
@@ -13,7 +27,7 @@ class LoginWrapper extends React.Component {
         this.setUser = this.setUser.bind(this)
     }
 
-    setUser(user) {
+    setUser(user: UserType | null) {
         // notify parent
         if (this.props.setUser != null && typeof this.props.setUser === "function") {
             this.props.setUser(user)

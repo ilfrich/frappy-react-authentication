@@ -8,8 +8,14 @@ const style = {
     },
 }
 
-class Logout extends React.Component {
-    constructor(props) {
+export interface LogoutProps {
+    apiPrefix?: string,
+    redirect?: string,
+    children: React.ReactNode,
+}
+
+class Logout extends React.Component<LogoutProps> {
+    constructor(props: LogoutProps) {
         super(props)
         this.logout = this.logout.bind(this)
     }

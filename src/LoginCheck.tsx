@@ -1,5 +1,6 @@
 import React from "react"
 import { util } from "quick-n-dirty-utils"
+import { UserType } from "./shared-types"
 
 const loginStates = {
     noToken: 0,
@@ -12,21 +13,31 @@ const style = {
         margin: "auto",
         marginTop: "200px",
         marginLeft: "40%",
-        textAlign: "center",
+        textAlign: "center" as const,
         width: "10%",
         fontSize: "24px",
         color: "#eee",
-        position: "static",
+        position: "static" as const,
     },
 }
 
-class LoginCheck extends React.Component {
-    constructor(props) {
+export interface LoginCheckProps {
+    apiPrefix?: string,
+    setUser: (user: UserType | null) => void
+}
+interface LoginCheckState {
+    firstCheckDone: boolean
+}
+
+class LoginCheck extends React.Component<LoginCheckProps, LoginCheckState> {
+
+    private abort: boolean = false
+    
+    constructor(props: LoginCheckProps) {
         super(props)
         this.state = {
             firstCheckDone: false,
         }
-        this.abort = false
 
         this.finish = this.finish.bind(this)
     }
@@ -73,7 +84,7 @@ class LoginCheck extends React.Component {
         this.abort = true
     }
 
-    finish(user) {
+    finish(user: UserType | null) {
         if (this.abort === false) {
             this.abort = true
             this.setState({

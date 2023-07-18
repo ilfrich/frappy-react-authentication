@@ -1,6 +1,7 @@
 import React from "react"
 import { mixins, NotificationBar } from "quick-n-dirty-react"
 import { util } from "quick-n-dirty-utils"
+import { UserType } from "./shared-types"
 
 const style = {
     form: {
@@ -23,8 +24,27 @@ const style = {
     },
 }
 
-class ApiKeyForm extends React.Component {
-    constructor(props) {
+export interface ApiKeyFormProps {
+    currentUser: UserType,
+    apiPrefix?: string,
+    mixins?: {
+        [key in string]: React.CSSProperties
+    },
+    titleStyle?: React.CSSProperties,
+}
+
+interface ApiKeyFormState {
+    currentKey: string,
+}
+interface NewKeyResponseType extends Response {
+    apiKey: string,
+}
+
+class ApiKeyForm extends React.Component<ApiKeyFormProps, ApiKeyFormState> {
+
+    private alert = React.createRef<NotificationBar>()
+
+    constructor(props: ApiKeyFormProps) {
         super(props)
         this.state = {
             currentKey: "",
@@ -50,7 +70,7 @@ class ApiKeyForm extends React.Component {
         el.select()
         document.execCommand("copy")
         document.body.removeChild(el)
-        this.alert.success("Key copied to clipboard.")
+        this.alert.current!.success("Key copied to clipboard.")
     }
 
     regenerate() {
@@ -59,14 +79,14 @@ class ApiKeyForm extends React.Component {
             method: "POST",
         })
             .then(util.restHandler)
-            .then(newKey => {
-                this.alert.success("New API key generated.")
+            .then(responseData => {
+                this.alert.current!.success("New API key generated.")
                 this.setState({
-                    currentKey: newKey.apiKey,
+                    currentKey: (responseData as NewKeyResponseType).apiKey,
                 })
             })
             .catch(() => {
-                this.alert.error("Error generating key.")
+                this.alert.current!.error("Error generating key.")
             })
     }
 
@@ -76,13 +96,13 @@ class ApiKeyForm extends React.Component {
             headers: util.getAuthJsonHeader(),
         })
             .then(response => {
-                this.alert.success("Key Revoked")
+                this.alert.current!.success("Key Revoked")
                 this.setState({
                     currentKey: "",
                 })
             })
             .catch(() => {
-                this.alert.error("Error revoking key.")
+                this.alert.current!.error("Error revoking key.")
             })
     }
 
@@ -92,11 +112,7 @@ class ApiKeyForm extends React.Component {
 
         return (
             <div style={style.form}>
-                <NotificationBar
-                    ref={el => {
-                        this.alert = el
-                    }}
-                />
+                <NotificationBar ref={this.alert} />
                 <h3 style={titleStyle}>API Key</h3>
                 <input type="text" disabled defaultValue={this.state.currentKey} style={effectiveMixins.textInput} />
                 {this.state.currentKey != null ? (

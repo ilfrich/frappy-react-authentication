@@ -1,6 +1,7 @@
 import React from "react"
 import { mixins } from "quick-n-dirty-react"
-import UserForm from "./UserForm"
+import UserForm, { UserFormProps } from "./UserForm"
+import { UserType } from "./shared-types"
 
 const style = {
     grid: {
@@ -12,8 +13,13 @@ const style = {
     },
 }
 
+
 class LocalUserForm extends UserForm {
-    constructor(props) {
+
+    private username = React.createRef<HTMLInputElement>()
+    private password = React.createRef<HTMLInputElement>()
+
+    constructor(props: UserFormProps) {
         super(props)
         this.updatePassword = this.updatePassword.bind(this)
         this.updatePermission = this.updatePermission.bind(this)
@@ -28,7 +34,7 @@ class LocalUserForm extends UserForm {
         }
     }
 
-    updatePermission(permission) {
+    updatePermission(permission: string) {
         return () => {
             this.setState(oldState => {
                 const { permissions } = oldState
@@ -50,7 +56,7 @@ class LocalUserForm extends UserForm {
 
     updatePassword() {
         this.props.userHandler
-            .updateUserPassword(this.props.user._id || this.props.user.id, this.password.value)
+            .updateUserPassword(this.props.user!._id || this.props.user!.id, this.password.current!.value)
             .then(updatedUser => {
                 this.props.onFinish(updatedUser)
             })
@@ -65,9 +71,9 @@ class LocalUserForm extends UserForm {
             super.save()
         } else {
             // create new user
-            const newUser = {
-                username: this.username.value,
-                password: this.password.value,
+            const newUser: UserType = {
+                username: this.username.current!.value,
+                password: this.password.current!.value,
                 permissions: this.state.permissions,
             }
             this.props.userHandler
@@ -93,9 +99,7 @@ class LocalUserForm extends UserForm {
                             <input
                                 type="text"
                                 style={mixins.textInput}
-                                ref={el => {
-                                    this.username = el
-                                }}
+                                ref={this.username}
                                 id="username"
                             />
 
@@ -105,16 +109,14 @@ class LocalUserForm extends UserForm {
                             <input
                                 type="password"
                                 style={mixins.textInput}
-                                ref={el => {
-                                    this.password = el
-                                }}
+                                ref={this.password}
                                 id="password"
                             />
                         </div>
                     ) : null}
                     <label style={mixins.label}>Permissions</label>
                     <ul style={mixins.noList}>
-                        {this.props.permissions.map(perm => (
+                        {this.props.permissions!.map(perm => (
                             <li key={perm}>
                                 <label>
                                     <input
@@ -137,9 +139,7 @@ class LocalUserForm extends UserForm {
                             <input
                                 type="password"
                                 style={mixins.textInput}
-                                ref={el => {
-                                    this.password = el
-                                }}
+                                ref={this.password}
                                 id="new-password"
                             />
                         </div>

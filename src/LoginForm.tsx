@@ -1,6 +1,7 @@
-import React from "react"
+import React, { KeyboardEvent } from "react"
 import { mixins } from "quick-n-dirty-react"
 import { util } from "quick-n-dirty-utils"
+import { UserType } from "./shared-types"
 
 const style = {
     loginForm: {
@@ -30,8 +31,26 @@ const errorStates = {
     serverError: "Error during authentication",
 }
 
-class LoginForm extends React.Component {
-    constructor(props) {
+export interface LoginFormProps {
+    apiPrefix?: string,
+    setUser: (user: UserType) => void,
+    titleStyle?: React.CSSProperties,
+    mixins: {
+        [key in string]: React.CSSProperties
+    }
+}
+interface LoginFormState {
+    loginOutcome: any,
+    loggingIn: boolean,
+}
+
+
+class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
+
+    private username = React.createRef<HTMLInputElement>()
+    private password = React.createRef<HTMLInputElement>()
+
+    constructor(props: LoginFormProps) {
         super(props)
         this.performLogin = this.performLogin.bind(this)
         this.checkEnter = this.checkEnter.bind(this)
@@ -43,7 +62,7 @@ class LoginForm extends React.Component {
     }
 
     componentDidMount() {
-        this.username.focus()
+        this.username.current!.focus()
     }
 
     performLogin() {
@@ -57,8 +76,8 @@ class LoginForm extends React.Component {
             method: "POST",
             headers: util.getJsonHeader(),
             body: JSON.stringify({
-                username: this.username.value,
-                password: this.password.value,
+                username: this.username.current!.value,
+                password: this.password.current!.value,
             }),
         })
             .then(res => {
@@ -96,7 +115,7 @@ class LoginForm extends React.Component {
             })
     }
 
-    checkEnter(e) {
+    checkEnter(e: KeyboardEvent<HTMLInputElement>) {
         // if it's enter, attempt log in
         if (e.which === 13) {
             this.performLogin()
@@ -114,18 +133,14 @@ class LoginForm extends React.Component {
                     <input
                         type="text"
                         style={effectiveMixins.textInput}
-                        ref={e => {
-                            this.username = e
-                        }}
+                        ref={this.username }
                         placeholder="Username"
                     />
                     <input
                         type="password"
                         style={effectiveMixins.textInput}
-                        ref={e => {
-                            this.password = e
-                        }}
-                        onKeyPress={this.checkEnter}
+                        ref={this.password}
+                        onKeyUp={this.checkEnter}
                         placeholder="Password"
                     />
                 </div>
