@@ -1,5 +1,5 @@
 import { default as LoginWrapper } from "./LoginWrapper"
-import { default as Logout } from "./LoginWrapper"
+import { default as Logout } from "./Logout"
 import { default as UserManager } from "./UserManager"
 import { default as PermissionCheck } from "./PermissionCheck"
 import { default as LoginForm } from "./LoginForm"

@@ -1,6 +1,6 @@
 {
   "name": "@frappy/react-authentication",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Authentication related components for React",
   "main": "dist/cjs/index.js",
   "type": "module",
@@ -43,9 +43,6 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
     "prettier": "^1.16.4",
-    "quick-n-dirty-react": "^1.1.1",
-    "quick-n-dirty-utils": "^1.0.0",
-    "react": "^18.2.0",
     "rollup": "^3.26.3",
     "rollup-plugin-dts": "^5.3.0",
     "tslib": "^2.6.0",
